@@ -1,147 +1,75 @@
-// Typing Animation
-const typingText = document.getElementById('typingText');
-const lines = ['Frontend Developer', 'React Enthusiast', 'UI/UX Focused'];
+// ============================================================================
+// TYPING ANIMATION
+// ============================================================================
+
+const typingLines = [
+  "Full-Stack Developer",
+  "Problem Solver",
+  "Coffee Enthusiast",
+  "Tech Innovator"
+];
+
 let currentLineIndex = 0;
 let currentCharIndex = 0;
 let isDeleting = false;
+const typingSpeed = 50;
+const deletingSpeed = 30;
+const pauseTime = 2000;
 
 function typeAnimation() {
-  const currentLine = lines[currentLineIndex];
-  
-  if (!isDeleting && currentCharIndex === currentLine.length) {
-    setTimeout(() => {
+  const typingTextElement = document.getElementById('typingText');
+  const currentLine = typingLines[currentLineIndex];
+
+  if (!isDeleting) {
+    // Typing
+    if (currentCharIndex < currentLine.length) {
+      typingTextElement.textContent += currentLine[currentCharIndex];
+      currentCharIndex++;
+      setTimeout(typeAnimation, typingSpeed);
+    } else {
+      // Pause before deleting
       isDeleting = true;
-      typeAnimation();
-    }, 2000);
-    return;
-  }
-
-  if (isDeleting && currentCharIndex === 0) {
-    isDeleting = false;
-    currentLineIndex = (currentLineIndex + 1) % lines.length;
-    typeAnimation();
-    return;
-  }
-
-  const nextCharIndex = isDeleting ? currentCharIndex - 1 : currentCharIndex + 1;
-  typingText.textContent = currentLine.substring(0, nextCharIndex);
-  currentCharIndex = nextCharIndex;
-
-  const speed = isDeleting ? 50 : 100;
-  setTimeout(typeAnimation, speed);
-}
-
-typeAnimation();
-
-// Toast Notification
-function showToast(message, type = 'success') {
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  
-  if (type === 'success') {
-    toast.style.backgroundColor = '#22c55e';
-  } else if (type === 'error') {
-    toast.style.backgroundColor = '#ef4444';
-  } else if (type === 'warning') {
-    toast.style.backgroundColor = '#eab308';
-  }
-  
-  toast.style.opacity = '1';
-  toast.style.pointerEvents = 'auto';
-  
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.pointerEvents = 'none';
-  }, 3000);
-}
-
-// Resume Download Handler
-async function handleDownloadResume() {
-  try {
-    const res = await fetch('resume.pdf', { method: 'HEAD' });
-    if (res.ok) {
-      const a = document.createElement('a');
-      a.href = 'resume.pdf';
-      a.download = 'Prajal_Gautam_Resume.pdf';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      showToast('Resume downloaded successfully', 'success');
-      return;
+      setTimeout(typeAnimation, pauseTime);
     }
-
-    showToast('Resume file is missing. You can contact me from the contact form.', 'warning');
-    document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-  } catch (err) {
-    showToast('Unable to download resume. Please try again or contact me.', 'error');
-    document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-  }
-}
-
-// Download buttons
-document.getElementById('downloadBtn').addEventListener('click', handleDownloadResume);
-document.getElementById('heroDownloadBtn').addEventListener('click', handleDownloadResume);
-
-// Theme Toggle
-const themeToggle = document.getElementById('themeToggle');
-let isDark = true;
-
-themeToggle.addEventListener('click', () => {
-  isDark = !isDark;
-  if (isDark) {
-    document.documentElement.classList.remove('light');
-    themeToggle.textContent = '🌙';
-    localStorage.setItem('theme', 'dark');
   } else {
-    document.documentElement.classList.add('light');
-    themeToggle.textContent = '☀️';
-    localStorage.setItem('theme', 'light');
+    // Deleting
+    if (currentCharIndex > 0) {
+      currentCharIndex--;
+      typingTextElement.textContent = currentLine.substring(0, currentCharIndex);
+      setTimeout(typeAnimation, deletingSpeed);
+    } else {
+      // Move to next line
+      isDeleting = false;
+      currentLineIndex = (currentLineIndex + 1) % typingLines.length;
+      setTimeout(typeAnimation, 500);
+    }
   }
-});
-
-// Load theme from localStorage
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme === 'light') {
-  isDark = false;
-  document.documentElement.classList.add('light');
-  themeToggle.textContent = '☀️';
 }
 
-// Contact Form
-const contactForm = document.getElementById('contactForm');
-contactForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  const formData = new FormData(contactForm);
-  const name = formData.get('name');
-  const email = formData.get('email');
-  const message = formData.get('message');
-  
-  // In a real scenario, you'd send this to a backend
-  // For now, we'll just show a success message and open mailto
-  const mailtoLink = `https://mail.google.com/mail/?view=cm&to=prajal.gautam.co@gmail.com&su=Message from ${encodeURIComponent(name)}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`)}`;
-  
-  window.open(mailtoLink, '_blank');
-  showToast('Opening email client...', 'success');
-  
-  contactForm.reset();
-});
+// ============================================================================
+// CHARACTER REVEAL ANIMATION
+// ============================================================================
 
-// Smooth Scrolling for navigation
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (e) {
-    const href = this.getAttribute('href');
-    if (href !== '#') {
-      e.preventDefault();
-      const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+function revealCharacter() {
+  const heading = "Hi, I'm Prajal Gautam";
+  const charRevealElement = document.getElementById('charReveal');
+  let charIndex = 0;
+
+  function addCharacter() {
+    if (charIndex < heading.length) {
+      charRevealElement.textContent += heading[charIndex];
+      charIndex++;
+      setTimeout(addCharacter, 50);
     }
-  });
-});
+  }
 
-// Intersection Observer for fade-in animations
+  addCharacter();
+}
+
+// ============================================================================
+// SCROLL ANIMATIONS
+// ============================================================================
+
 const observerOptions = {
   threshold: 0.1,
   rootMargin: '0px 0px -50px 0px'
@@ -150,61 +78,323 @@ const observerOptions = {
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.style.animation = entry.target.style.animation || 'none';
+      entry.target.classList.add('fade-in');
+      
+      // Animate skill bars
+      if (entry.target.classList.contains('skill-bar')) {
+        const skillValue = entry.target.getAttribute('data-value');
+        entry.target.style.setProperty('--value', skillValue);
+      }
+      
       observer.unobserve(entry.target);
     }
   });
 }, observerOptions);
 
-document.querySelectorAll('.fade-in').forEach(el => {
-  observer.observe(el);
-});
+// ============================================================================
+// BACK TO TOP BUTTON
+// ============================================================================
 
-// Add fade-in class to project cards on scroll
-const projectCards = document.querySelectorAll('.project-card');
-projectCards.forEach((card, index) => {
-  card.style.animation = `fadeIn 0.6s ease-out forwards`;
-  card.style.animationDelay = `${index * 0.1}s`;
-  card.style.opacity = '0';
-});
+const backToTopButton = document.getElementById('backToTop');
 
-// Skill bars animation on scroll
-const skillBars = document.querySelectorAll('.skill-bar');
-const skillObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const bar = entry.target;
-      bar.style.animation = `fillWidth 1.5s ease-out forwards`;
-      skillObserver.unobserve(entry.target);
+if (backToTopButton) {
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 500) {
+      backToTopButton.style.opacity = '1';
+      backToTopButton.style.pointerEvents = 'auto';
+      backToTopButton.style.transform = 'scale(1)';
+    } else {
+      backToTopButton.style.opacity = '0';
+      backToTopButton.style.pointerEvents = 'none';
+      backToTopButton.style.transform = 'scale(0.8)';
     }
   });
-}, {
-  threshold: 0.5
-});
 
-skillBars.forEach(bar => {
-  skillObserver.observe(bar);
-});
+  backToTopButton.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+}
 
-// Active link highlighting
-const navLinks = document.querySelectorAll('nav a[href^="#"]');
-window.addEventListener('scroll', () => {
-  let current = '';
+// ============================================================================
+// NAVIGATION ACTIVE LINK
+// ============================================================================
+
+function updateActiveNavLink() {
+  const sections = document.querySelectorAll('section');
+  const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.clientHeight;
+      
+      if (scrollY >= sectionTop - sectionHeight / 3) {
+        current = section.getAttribute('id');
+      }
+    });
+
+    navLinks.forEach(link => {
+      link.classList.remove('text-blue-400', 'font-semibold');
+      
+      if (link.getAttribute('href').slice(1) === current) {
+        link.classList.add('text-blue-400', 'font-semibold');
+      } else {
+        link.classList.add('text-slate-300');
+      }
+    });
+  });
+}
+
+// ============================================================================
+// FORM VALIDATION & SUBMISSION
+// ============================================================================
+
+const contactForm = document.getElementById('contactForm');
+
+if (contactForm) {
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  const messageInput = document.getElementById('message');
+  const nameError = document.getElementById('error-name');
+  const emailError = document.getElementById('error-email');
+  const messageError = document.getElementById('error-message');
+
+  function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function showError(inputField, errorElement, message) {
+    inputField.classList.add('border-red-500');
+    inputField.classList.add('bg-red-500', 'bg-opacity-5');
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.style.display = 'block';
+    }
+  }
+
+  function clearError(inputField, errorElement) {
+    inputField.classList.remove('border-red-500');
+    inputField.classList.remove('bg-red-500', 'bg-opacity-5');
+    if (errorElement) {
+      errorElement.textContent = '';
+      errorElement.style.display = 'none';
+    }
+  }
+
+  contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    let isValid = true;
+
+    // Validate Name
+    if (!nameInput.value.trim()) {
+      showError(nameInput, nameError, 'Name is required');
+      isValid = false;
+    } else {
+      clearError(nameInput, nameError);
+    }
+
+    // Validate Email
+    if (!emailInput.value.trim()) {
+      showError(emailInput, emailError, 'Email is required');
+      isValid = false;
+    } else if (!validateEmail(emailInput.value)) {
+      showError(emailInput, emailError, 'Please provide a valid email');
+      isValid = false;
+    } else {
+      clearError(emailInput, emailError);
+    }
+
+    // Validate Message
+    if (!messageInput.value.trim()) {
+      showError(messageInput, messageError, 'Message is required');
+      isValid = false;
+    } else if (messageInput.value.trim().length < 10) {
+      showError(messageInput, messageError, 'Message must be at least 10 characters');
+      isValid = false;
+    } else {
+      clearError(messageInput, messageError);
+    }
+
+    if (isValid) {
+      // Form is valid - could send data here if you have a backend
+      showToast('Message sent successfully!', 'success');
+      contactForm.reset();
+      nameInput.classList.remove('border-red-500', 'bg-red-500', 'bg-opacity-5');
+      emailInput.classList.remove('border-red-500', 'bg-red-500', 'bg-opacity-5');
+      messageInput.classList.remove('border-red-500', 'bg-red-500', 'bg-opacity-5');
+    }
+  });
+
+  // Real-time validation
+  nameInput.addEventListener('blur', () => {
+    if (!nameInput.value.trim()) {
+      showError(nameInput, nameError, 'Name is required');
+    } else {
+      clearError(nameInput, nameError);
+    }
+  });
+
+  emailInput.addEventListener('blur', () => {
+    if (!emailInput.value.trim()) {
+      showError(emailInput, emailError, 'Email is required');
+    } else if (!validateEmail(emailInput.value)) {
+      showError(emailInput, emailError, 'Please provide a valid email');
+    } else {
+      clearError(emailInput, emailError);
+    }
+  });
+
+  messageInput.addEventListener('blur', () => {
+    if (!messageInput.value.trim()) {
+      showError(messageInput, messageError, 'Message is required');
+    } else if (messageInput.value.trim().length < 10) {
+      showError(messageInput, messageError, 'Message must be at least 10 characters');
+    } else {
+      clearError(messageInput, messageError);
+    }
+  });
+}
+
+// ============================================================================
+// TOAST NOTIFICATIONS
+// ============================================================================
+
+function showToast(message, type = 'info') {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+
+  toast.textContent = message;
+  toast.className = 'fixed bottom-6 right-6 px-6 py-3 rounded-lg font-medium z-50 transition-opacity duration-300';
   
-  const sections = document.querySelectorAll('section[id]');
-  sections.forEach(section => {
-    const sectionTop = section.offsetTop;
-    const sectionHeight = section.clientHeight;
-    if (scrollY >= (sectionTop - 200)) {
-      current = section.getAttribute('id');
+  // Set background color based on type
+  if (type === 'success') {
+    toast.classList.add('bg-green-500', 'text-white');
+  } else if (type === 'error') {
+    toast.classList.add('bg-red-500', 'text-white');
+  } else {
+    toast.classList.add('bg-blue-500', 'text-white');
+  }
+  
+  toast.style.opacity = '1';
+  
+  setTimeout(() => {
+    toast.style.opacity = '0';
+  }, 3000);
+}
+
+// ============================================================================
+// THEME TOGGLE
+// ============================================================================
+
+const themeToggle = document.getElementById('themeToggle');
+
+function initTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+}
+
+if (themeToggle) {
+  themeToggle.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+}
+
+// ============================================================================
+// DOWNLOAD RESUME
+// ============================================================================
+
+const downloadButton = document.getElementById('downloadResume');
+
+if (downloadButton) {
+  downloadButton.addEventListener('click', async () => {
+    try {
+      const response = await fetch('resume.pdf', { method: 'HEAD' });
+      
+      if (response.ok) {
+        const link = document.createElement('a');
+        link.href = 'resume.pdf';
+        link.download = 'Prajal_Gautam_Resume.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('Resume downloaded successfully!', 'success');
+      } else {
+        showToast('Resume file not found', 'error');
+      }
+    } catch (error) {
+      console.error('Error downloading resume:', error);
+      showToast('Failed to download resume', 'error');
     }
+  });
+}
+
+// ============================================================================
+// SMOOTH SCROLL FOR NAV LINKS
+// ============================================================================
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    const href = this.getAttribute('href');
+    if (href !== '#' && document.querySelector(href)) {
+      e.preventDefault();
+      document.querySelector(href).scrollIntoView({
+        behavior: 'smooth'
+      });
+    }
+  });
+});
+
+// ============================================================================
+// MOBILE MENU TOGGLE (if implemented)
+// ============================================================================
+
+const mobileMenuButton = document.getElementById('mobileMenuToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+
+if (mobileMenuButton && mobileMenu) {
+  mobileMenuButton.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
   });
 
-  navLinks.forEach(link => {
-    link.style.color = '#cbd5e1';
-    if (link.getAttribute('href') === `#${current}`) {
-      link.style.color = '#60a5fa';
-      link.style.fontWeight = '600';
-    }
+  // Close menu when a link is clicked
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.add('hidden');
+    });
   });
+}
+
+// ============================================================================
+// INITIALIZATION
+// ============================================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Start animations
+  revealCharacter();
+  setTimeout(typeAnimation, 500);
+  updateActiveNavLink();
+  initTheme();
+
+  // Observe elements for scroll animations
+  document.querySelectorAll('.fade-in').forEach(el => {
+    observer.observe(el);
+  });
+
+  document.querySelectorAll('.skill-bar').forEach(el => {
+    observer.observe(el);
+  });
+
+  // Initial back-to-top state
+  if (backToTopButton) {
+    backToTopButton.style.opacity = '0';
+    backToTopButton.style.transform = 'scale(0.8)';
+    backToTopButton.style.transition = 'opacity 300ms, transform 300ms';
+  }
 });
