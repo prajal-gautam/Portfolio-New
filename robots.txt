@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /node_modules/
+Crawl-delay: 1
+
+Sitemap: https://prajal-gautam.com/sitemap.xml
