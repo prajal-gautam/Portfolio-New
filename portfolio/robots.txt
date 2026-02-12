@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://prajal-gautam.github.io/portfolio/sitemap.xml

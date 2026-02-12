@@ -2,13 +2,15 @@
   "name": "monorepo",
   "version": "0.0.0",
   "private": true,
-  "homepage": "https://prajal-gautam.github.io/Portfolio",
+  "homepage": "https://prajal-gautam.github.io/Portfolio-New",
+
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d apps/web/build",
+    "start": "react-scripts start",
+  "build": "react-scripts build",
+  "predeploy": "npm run build",
+  "deploy": "gh-pages -d build",
     "dev": "concurrently --kill-others --raw \"npm run dev --prefix apps/web\"",
-    "build": "concurrently --raw \"npm run build --prefix apps/web\"",
-    "start": "concurrently --kill-others --raw",
+    
     "lint": "concurrently --raw \"npm run lint --prefix apps/web\""
   },
   "devDependencies": {
