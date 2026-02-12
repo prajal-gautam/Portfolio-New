@@ -27,6 +27,10 @@
 		<link rel="stylesheet" crossorigin href="/Portfolio-New/assets/index-D6skktsx.css">
 	</head>
 	<body>
-		<div id="root"></div>
+		<div id="root"></div>
+
+		<!-- Debug: show a quick message before the main bundle runs -->
+		<script>console.log('inline-check: index served'); try{document.getElementById('root').innerText = 'Inline check: page served — main bundle loading';}catch(e){console.log(e);}</script>
+
 	</body>
 </html>
